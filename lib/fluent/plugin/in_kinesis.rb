@@ -18,14 +18,14 @@ require 'logger'
 require 'securerandom'
 require 'base64'
 require 'fluent/plugin/thread_supervisor'
-require 'fluent/plugin/kinesis_sherd'
+require 'fluent/plugin/kinesis_shard'
 
 
 module FluentPluginKinesis
   class InputFilter < Fluent::Input
     include Fluent::DetachMultiProcessMixin
     include KinesisSupervisor
-    include KinesisSherd
+    include KinesisShard
 
     USER_AGENT_NAME = 'fluent-plugin-kinesis-input-filter'
 

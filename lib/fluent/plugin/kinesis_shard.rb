@@ -1,6 +1,6 @@
 
 
-module KinesisSherd
+module KinesisShard
   
   def load_records_thread(shard_id)
     begin
