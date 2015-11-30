@@ -41,7 +41,6 @@ module FluentPluginKinesis
     config_param :credentials_path,       :string, :default => nil
     config_param :stream_name,            :string
     
-    config_param :http_proxy,             :string,  :default => nil,    :secret => true
     config_param :use_base64,             :bool,    :default => false,  :secret => true
     config_param :load_records_limit,     :integer, :default => 10000,  :secret => true
     config_param :load_record_interval,   :integer, :default => 1,      :secret => true #=> sec
@@ -99,10 +98,6 @@ module FluentPluginKinesis
         credentials_opts[:path] = @credentials_path if @credentials_path
         credentials = Aws::SharedCredentials.new(credentials_opts)
         options[:credentials] = credentials
-      end
-      
-      if @http_proxy
-        options[:http_proxy] = @http_proxy
       end
       
       @client = Aws::Kinesis::Client.new(options)
