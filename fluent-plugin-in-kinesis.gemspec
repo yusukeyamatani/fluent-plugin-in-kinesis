@@ -3,7 +3,8 @@ Gem::Specification.new do |spec|
   spec.name          = "fluent-plugin-in-kinesis"
   spec.version       = "0.0.1"
   spec.authors       = ["yusuke yamatani "]
-  spec.homepage      = "https://github.com/yusukeyamatani/fluent-plugin-in-kinesis"
+  spec.email         = ["yusuke.yamatani@gu3.co.jp"]
+  spec.homepage      = "https://github.com/gumi/fluent-plugin-in-kinesis"
   spec.summary     = %q{Fluentd plugin to count records with specified regexp patterns}
   spec.description = %q{To count records with string fields by regexps (To count records with numbers, use numeric-counter)}
   spec.license       = "MIT"
