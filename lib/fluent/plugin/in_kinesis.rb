@@ -78,11 +78,8 @@ module FluentPluginKinesis
     end
 
     def load_client
-      user_agent_suffix = "#{USER_AGENT_NAME}/#{FluentPluginKinesis::VERSION}"
-      
-      options = {
-        user_agent_suffix: user_agent_suffix
-      }
+          
+      options = {}
       
       if @region
         options[:region] = @region
