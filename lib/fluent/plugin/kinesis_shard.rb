@@ -64,6 +64,10 @@ module KinesisShard
         d = Base64.decode64(d)
       end
       
+      if @use_gunzip
+        d = Zlib::GzipReader.new(StringIO.new(d)).read
+      end
+
       time, record = @parser.parse(d)
       if record.nil? || record.empty?
         $log.warn "format error :=> record #{time} : #{d}"

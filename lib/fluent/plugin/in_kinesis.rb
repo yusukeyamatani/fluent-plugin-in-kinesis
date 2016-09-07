@@ -17,6 +17,8 @@ require 'yajl'
 require 'logger'
 require 'securerandom'
 require 'base64'
+require 'stringio'
+require 'zlib'
 require 'fluent/plugin/thread_supervisor'
 require 'fluent/plugin/kinesis_shard'
 
@@ -42,6 +44,7 @@ module FluentPluginKinesis
     config_param :stream_name,            :string
     
     config_param :use_base64,             :bool,    :default => false,  :secret => true
+    config_param :use_gunzip,             :bool,    :default => false,  :secret => true
     config_param :load_records_limit,     :integer, :default => 10000,  :secret => true
     config_param :load_record_interval,   :integer, :default => 1,      :secret => true #=> sec
     config_param :load_shard_interval,    :integer, :default => 1,      :secret => true #=> sec
