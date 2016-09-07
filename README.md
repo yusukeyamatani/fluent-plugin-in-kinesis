@@ -62,6 +62,9 @@ Or install it yourself as:
 ### `use_base64`
   Set if BASE64 decode is necessary.
  
+### `use_gunzip`
+  Set if GZip decompress is necessary.
+
 ### `load_records_limit`
   The maximum number of records to return. 
   
