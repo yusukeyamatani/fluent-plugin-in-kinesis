@@ -12,7 +12,9 @@ Gem::Specification.new do |spec|
   spec.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "fluentd"
+  spec.add_runtime_dependency "fluentd", ">= 0.12.15", "< 0.13"
+  spec.add_runtime_dependency "aws-sdk-core", ">= 2.0.12", "< 3.0"
+  spec.add_runtime_dependency "multi_json", "~> 1.0"
    
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"
