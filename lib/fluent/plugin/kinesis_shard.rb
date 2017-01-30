@@ -16,15 +16,14 @@ module KinesisShard
     
     while !@stop_flag && !@thread_stop_map[shard_id] do
       begin
-        records_info = @client.get_records(shard_iterator: shard_iterator, limit: @load_records_limit)
+        records_info = get_records_with_retry(shard_iterator)
       rescue => e
         $log.error "get record Error: #{e.message}"
         re_shard_iterator_info = get_shard_iterator_info(shard_id, last_sequence_number)
-        records_info = @client.get_records(
-          shard_iterator: re_shard_iterator_info.shard_iterator, limit: @load_records_limit/10)
+        records_info = get_records_with_retry(re_shard_iterator_info.shard_iterator)
       end
       
-      if records_info.next_shard_iterator.nil?
+      if records_info.nil? || records_info.next_shard_iterator.nil?
         @thread_stop_map[shard_id] = true
         break
       end
@@ -55,6 +54,22 @@ module KinesisShard
     $log.warn "does not AFTER_SEQUENCE_NUMBER : #{e.message}"
     shard_iterator_info = @client.get_shard_iterator(
       stream_name: @stream_name, shard_id: shard_id, shard_iterator_type: 'TRIM_HORIZON')
+  end
+
+  def get_records_with_retry(shard_iterator, retry_count=0, backoff: nil)
+    backoff ||= Backoff.new
+    begin
+      @client.get_records(shard_iterator: shard_iterator, limit: @load_records_limit)
+    rescue Aws::Kinesis::Errors::ProvisionedThroughputExceededException => e
+      if retry_count < @retries_on_get_records
+        backoff.reset if @reset_backoff_if_success
+        sleep(backoff.next)
+        $log.warn "Retrying to get records. Retry count: #{retry_count}"
+        get_records_with_retry(shard_iterator, retry_count + 1, backoff: backoff)
+      else
+        raise e
+      end
+    end
   end
 
   def emit_records(data, shard_id)
@@ -150,6 +165,32 @@ module KinesisShard
     
     def update(sequence_number)
       @data['last_sequence_number'] = sequence_number
+    end
+  end
+
+  class Backoff
+    def initialize
+      @count = 0
+    end
+
+    def next
+      value = calc(@count)
+      @count += 1
+      value
+    end
+
+    def reset
+      @count = 0
+    end
+
+    private
+
+    def calc(count)
+      (2 ** count) * scaling_factor
+    end
+
+    def scaling_factor
+      0.3 + (0.5-rand) * 0.1
     end
   end
 end

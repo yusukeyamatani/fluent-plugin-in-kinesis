@@ -51,6 +51,8 @@ module FluentPluginKinesis
     config_param :format,                 :string,  :default => 'none', :secret => true
     config_param :describe_shard,         :bool,    :default => false,  :secret => true
     config_param :describe_use_shards,    :array,   :default => [],     :secret => true
+    config_param :retries_on_get_records, :integer, :default => 3
+    config_param :reset_backoff_if_success, :bool,  :default => true
     
     def configure(conf)
       super
