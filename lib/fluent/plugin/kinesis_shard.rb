@@ -62,9 +62,10 @@ module KinesisShard
   rescue Aws::Kinesis::Errors::ProvisionedThroughputExceededException => e
     if retry_count < @retries_on_get_records
       sleep(backoff.next)
-      $log.warn "Retrying to get records. Retry count: #{retry_count}"
+      $log.warn "Retrying to get records. Retry count: #{retry_count + 1}"
       get_records_with_retry(shard_iterator, retry_count + 1, backoff: backoff)
     else
+      $log.warn "Give up to get records."
       raise e
     end
   end
