@@ -23,7 +23,7 @@ module KinesisShard
         records_info = get_records_with_retry(re_shard_iterator_info.shard_iterator)
       end
       
-      if records_info.nil? || records_info.next_shard_iterator.nil?
+      if records_info.next_shard_iterator.nil?
         @thread_stop_map[shard_id] = true
         break
       end
@@ -58,17 +58,14 @@ module KinesisShard
 
   def get_records_with_retry(shard_iterator, retry_count=0, backoff: nil)
     backoff ||= Backoff.new
-    begin
-      @client.get_records(shard_iterator: shard_iterator, limit: @load_records_limit)
-    rescue Aws::Kinesis::Errors::ProvisionedThroughputExceededException => e
-      if retry_count < @retries_on_get_records
-        backoff.reset if @reset_backoff_if_success
-        sleep(backoff.next)
-        $log.warn "Retrying to get records. Retry count: #{retry_count}"
-        get_records_with_retry(shard_iterator, retry_count + 1, backoff: backoff)
-      else
-        raise e
-      end
+    @client.get_records(shard_iterator: shard_iterator, limit: @load_records_limit)
+  rescue Aws::Kinesis::Errors::ProvisionedThroughputExceededException => e
+    if retry_count < @retries_on_get_records
+      sleep(backoff.next)
+      $log.warn "Retrying to get records. Retry count: #{retry_count}"
+      get_records_with_retry(shard_iterator, retry_count + 1, backoff: backoff)
+    else
+      raise e
     end
   end
 
