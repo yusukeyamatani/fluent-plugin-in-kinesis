@@ -90,6 +90,10 @@ Or install it yourself as:
 ### `describe_use_shards`
   Specify the shards to be used (see below).
  
+### `retries_on_get_records`
+  Max retry count.
+
+
 ##Configuration examples
     <source>
     
