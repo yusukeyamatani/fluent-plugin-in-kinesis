@@ -45,7 +45,7 @@ module KinesisShard
   def get_shard_iterator_info(shard_id='', last_sequence_number='')
     if last_sequence_number.empty?
       shard_iterator_info = @client.get_shard_iterator(
-        stream_name: @stream_name, shard_id: shard_id, shard_iterator_type: 'TRIM_HORIZON')
+        stream_name: @stream_name, shard_id: shard_id, shard_iterator_type: @fallback_shard_iterator_type)
     else
       shard_iterator_info = @client.get_shard_iterator(
         stream_name: @stream_name, shard_id: shard_id, shard_iterator_type: 'AFTER_SEQUENCE_NUMBER', starting_sequence_number: last_sequence_number)

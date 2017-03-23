@@ -52,6 +52,7 @@ module FluentPluginKinesis
     config_param :describe_shard,         :bool,    :default => false,  :secret => true
     config_param :describe_use_shards,    :array,   :default => [],     :secret => true
     config_param :retries_on_get_records, :integer, :default => 3
+    config_param :fallback_shard_iterator_type, :string,  :default => 'TRIM_HORIZON', :secret => true
     
     def configure(conf)
       super
